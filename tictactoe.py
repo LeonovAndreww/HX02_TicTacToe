@@ -1,7 +1,7 @@
 """
 Tic Tac Toe Player
 """
-
+import copy
 import math
 
 X = "X"
@@ -20,8 +20,9 @@ def initial_state():
 
 def player(board):
     moves = 0
-    for cell in board:
-        if cell != EMPTY: moves+=1
+    for i in board:
+        for j in i:
+            if j != EMPTY: moves+=1
     if moves % 2 == 0: return X
     return O
 
@@ -30,39 +31,53 @@ def actions(board):
     available_actions = set()
     for i in range (len(board)):
         for j in range (len(board[0])):
-            if board[i][j] != EMPTY: available_actions.add((i, j))
+            if board[i][j] == EMPTY: available_actions.add((i, j))
     return available_actions
 
 def result(board, action):
-    """
-    Returns the board that results from making move (i, j) on the board.
-    """
-    raise NotImplementedError
+    new_board = copy.deepcopy(board)
+
+    y = action[0]
+    x = action[1]
+
+    if new_board[y][x] == EMPTY:
+        new_board[y][x] = player(board)
+        return new_board
+    raise ValueError
 
 
 def winner(board):
-    """
-    Returns the winner of the game, if there is one.
-    """
-    raise NotImplementedError
+    for i in range (len(board)):
+        if board[i][0] == board[i][1] == board[i][2]:
+            if board[i][0] != EMPTY:
+                return board[i][0]
 
+    for i in range (len(board[0])):
+        if board[0][i] == board[1][i] == board[2][i]:
+            if board[0][i] != EMPTY:
+                return board[0][i]
+
+    if board[1][1] != EMPTY:
+        if board[0][0] == board[1][1] == board[2][2]: return board[0][0]
+        if board[0][2] == board[1][1] == board[2][0]: return board[0][2]
+
+    return None
 
 def terminal(board):
-    """
-    Returns True if game is over, False otherwise.
-    """
-    raise NotImplementedError
+    if winner(board) is not None: return True
+
+    for i in board:
+        for j in i:
+            if j == EMPTY: return False
+
+    return True
 
 
 def utility(board):
-    """
-    Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
-    """
-    raise NotImplementedError
+    if winner(board) == X: return 1
+    if winner(board) == O: return -1
+    return 0
 
 
 def minimax(board):
-    """
-    Returns the optimal action for the current player on the board.
-    """
-    raise NotImplementedError
+    return list(actions(board))[0] # stub
