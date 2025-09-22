@@ -80,4 +80,38 @@ def utility(board):
 
 
 def minimax(board):
-    return list(actions(board))[0] # stub
+    if terminal(board): return None
+
+    best_move = None
+
+    if player(board) == X:
+        best_score = -2
+        for action in actions(board):
+            score = minimal(result(board, action))
+            if score > best_score:
+                best_move = action
+                best_score = score
+
+    if player(board) == O:
+        best_score = 2
+        for action in actions(board):
+            score = maximal(result(board, action))
+            if score < best_score:
+                best_move = action
+                best_score = score
+
+    return best_move
+
+def minimal(board):
+    if terminal(board): return utility(board)
+    value = 2
+
+    for action in actions(board): value = min(value, maximal(result(board, action)))
+    return value
+
+def maximal(board):
+    if terminal(board): return utility(board)
+    value = -2
+
+    for action in actions(board): value = max(value, minimal(result(board, action)))
+    return value
